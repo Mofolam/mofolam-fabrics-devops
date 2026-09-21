@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Fabric - Mofolam Fabrics</title>
+</head>
+
+<body>
+
+    <h1>Mofolam Fabrics</h1>
+    <h2>Add New Fabric</h2>
+
+    <form method="POST">
+
+        <label for="name">Fabric Name:</label><br>
+        <input type="text" id="name" name="name" required>
+        <br><br>
+
+        <label for="category">Category:</label><br>
+        <input type="text" id="category" name="category" required>
+        <br><br>
+
+        <label for="quantity">Quantity:</label><br>
+        <input type="number" id="quantity" name="quantity" min="0" required>
+        <br><br>
+
+        <label for="price">Price:</label><br>
+        <input type="number" id="price" name="price" min="0" required>
+        <br><br>
+
+        <button type="submit">Add Fabric</button>
+
+    </form>
+
+    <br>
+
+    <a href="/inventory">View Inventory</a>
+
+</body>
+</html>
