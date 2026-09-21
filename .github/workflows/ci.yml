@@ -29,3 +29,9 @@ jobs:
 
       - name: Run tests
         run: python -m pytest
+
+              - name: Run tests
+        run: python -m pytest
+
+      - name: Run Gitleaks
+        uses: gitleaks/gitleaks-action@v2
