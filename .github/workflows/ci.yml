@@ -30,10 +30,12 @@ jobs:
       - name: Run tests
         run: python -m pytest
 
+      - name: Install Gitleaks
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/gitleaks/gitleaks/master/install.sh | sh -s -- -b /usr/local/bin
+
       - name: Run Gitleaks
-        uses: gitleaks/gitleaks-action@v3
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gitleaks detect --source . --verbose
 
       - name: Build Docker image
         run: docker build -t mofolam-fabrics-app .
