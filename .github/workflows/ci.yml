@@ -9,8 +9,32 @@ on:
       - main
 
 jobs:
+
   test:
+    name: Test - Python ${{ matrix.python-version }}
     runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        python-version: ["3.12", "3.13", "3.14"]
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: mofolam_fabrics
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U postgres -d mofolam_fabrics"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/mofolam_fabrics
 
     steps:
       - name: Checkout code
@@ -19,7 +43,8 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.14"
+          python-version: ${{ matrix.python-version }}
+          cache: pip
 
       - name: Install dependencies
         run: |
@@ -28,14 +53,59 @@ jobs:
           pip install pytest
 
       - name: Run tests
-        run: python -m pytest
+        run: python -m pytest --junitxml=test-results.xml
 
-      - name: Install Gitleaks
-        run: |
-          curl -sSfL https://raw.githubusercontent.com/gitleaks/gitleaks/master/install.sh | sh -s -- -b /usr/local/bin
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-python-${{ matrix.python-version }}
+          path: test-results.xml
+          if-no-files-found: ignore
+
+
+  security:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    needs: test
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
       - name: Run Gitleaks
-        run: gitleaks detect --source . --verbose
+        run: |
+          docker run --rm \
+            -v "${{ github.workspace }}:/repo" \
+            zricethezav/gitleaks:latest \
+            detect --source=/repo --verbose
 
-      - name: Build Docker image
-        run: docker build -t mofolam-fabrics-app .
+
+  docker:
+    name: Build and Push Docker Image
+    runs-on: ubuntu-latest
+    needs: [test, security]
+
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/mofolam-fabrics-app:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/mofolam-fabrics-app:${{ github.sha }}
