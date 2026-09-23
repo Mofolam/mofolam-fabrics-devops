@@ -81,7 +81,7 @@ jobs:
             detect --source=/repo --verbose
 
 
-  docker:
+    docker:
     name: Build and Push Docker Image
     runs-on: ubuntu-latest
     needs: [test, security]
@@ -107,5 +107,5 @@ jobs:
           context: .
           push: true
           tags: |
-            ${{ secrets.DOCKERHUB_oreoluu }}/mofolam-fabrics-app:latest
-            ${{ secrets.DOCKERHUB_oreoluu }}/mofolam-fabrics-app:${{ github.sha }}
+            oreoluu/mofolam-fabrics-app:latest
+            oreoluu/mofolam-fabrics-app:${{ github.sha }}
