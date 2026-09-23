@@ -107,5 +107,5 @@ jobs:
           context: .
           push: true
           tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/mofolam-fabrics-app:latest
-            ${{ secrets.DOCKERHUB_USERNAME }}/mofolam-fabrics-app:${{ github.sha }}
+            ${{ secrets.DOCKERHUB_oreoluu }}/mofolam-fabrics-app:latest
+            ${{ secrets.DOCKERHUB_oreoluu }}/mofolam-fabrics-app:${{ github.sha }}
