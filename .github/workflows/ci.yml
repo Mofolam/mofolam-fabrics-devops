@@ -1,6 +1,6 @@
 name: Mofolam Fabrics CI
 
-on:
+"on":
   push:
     branches:
       - main
@@ -62,8 +62,7 @@ jobs:
           path: test-results.xml
           if-no-files-found: ignore
 
-
-   security:
+  security:
     name: Security Scan
     runs-on: ubuntu-latest
     needs: test
