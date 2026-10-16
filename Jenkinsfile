@@ -1,3 +1,4 @@
+
 pipeline {
     agent {
         docker {
@@ -33,8 +34,15 @@ pipeline {
         }
 
         stage('Build Docker Image') {
-            agent any
+            agent {
+                docker {
+                    image 'jenkins-with-docker-cli:latest'
+                    args '-u root:root -v /var/run/docker.sock:/var/run/docker.sock'
+                    reuseNode true
+                }
+            }
             steps {
+                sh 'docker version'
                 sh 'docker build -t mofolam-fabrics-app:ci .'
             }
         }
