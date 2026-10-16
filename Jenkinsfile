@@ -31,6 +31,13 @@ pipeline {
                 sh 'pytest -v'
             }
         }
+
+        stage('Build Docker Image') {
+            agent any
+            steps {
+                sh 'docker build -t mofolam-fabrics-app:ci .'
+            }
+        }
     }
 
     post {
@@ -39,4 +46,3 @@ pipeline {
         }
     }
 }
-
