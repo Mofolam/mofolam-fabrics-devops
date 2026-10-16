@@ -17,9 +17,12 @@ pipeline {
                 docker {
                     image 'python:3.12-slim'
                     args '-u root:root'
+                    reuseNode true
                 }
             }
             steps {
+                sh 'pwd'
+                sh 'ls -la'
                 sh 'python --version'
                 sh 'python -m pip install --upgrade pip'
                 sh 'pip install -r requirements.txt'
