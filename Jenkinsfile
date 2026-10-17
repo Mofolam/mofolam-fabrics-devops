@@ -64,7 +64,7 @@ pipeline {
                 sh '''#!/bin/sh
                     set -eu
                     apt-get update
-                    apt-get install -y --no-install-recommends curl ca-certificates tar
+                    apt-get install -y --no-install-recommends git curl ca-certificates tar
                     GITLEAKS_VERSION='8.30.0'
                     curl -fsSL "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz" -o /tmp/gitleaks.tar.gz
                     echo '79a3ab579b53f71efd634f3aaf7e04a0fa0cf206b7ed434638d1547a2470a66e  /tmp/gitleaks.tar.gz' | sha256sum -c -
